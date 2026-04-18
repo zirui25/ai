@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Zirui AI 开发者中心与技术支持</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Noto Sans', sans-serif;
+            background: #f1f5f9;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 主布局 */
+        .app {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* ========= 侧栏（多级菜单） ========= */
+        .sidebar {
+            width: 320px;
+            background: #0A62D6F0;
+            color: #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            flex-shrink: 0;
+            box-shadow: 2px 0 12px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo small {
+            font-size: 12px;
+            color: #000000;
+            display: block;
+            margin-top: 4px;
+        }
+
+        /* 菜单树 */
+        .menu-tree {
+            flex: 1;
+            padding: 16px 0;
+        }
+
+        .menu-category {
+            margin-bottom: 8px;
+        }
+
+        .category-title {
+            padding: 10px 20px;
+            font-weight: 600;
+            font-size: 13px;
+            color: #38bdf8;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .category-title:hover {
+            background: #1e293b;
+        }
+
+        .category-toggle {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .category-items {
+            display: none;
+            flex-direction: column;
+        }
+
+        .category-items.open {
+            display: flex;
+        }
+
+        .menu-item {
+            padding: 10px 20px 10px 40px;
+            font-size: 13px;
+            color: #cbd5e1;
+            cursor: pointer;
+            transition: 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 8px;
+            margin: 2px 12px;
+        }
+
+        .menu-item:hover {
+            background: #1e293b;
+            color: white;
+        }
+
+        .menu-item.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .menu-badge {
+            font-size: 10px;
+            background: #334155;
+            padding: 2px 8px;
+            border-radius: 20px;
+            color: #94a3b8;
+        }
+
+        .menu-item.active .menu-badge {
+            background: #3b82f6;
+            color: white;
+        }
+
+        /* 子菜单（三级） */
+        .sub-item {
+            padding: 8px 20px 8px 60px;
+            font-size: 12px;
+            color: #94a3b8;
+            cursor: pointer;
+        }
+
+        .sub-item:hover {
+            background: #1e293b;
+            color: #cbd5e1;
+        }
+
+        /* 底部 */
+        .sidebar-footer {
+            padding: 16px 20px;
+            font-size: 11px;
+            color: #475569;
+            border-top: 1px solid #1e293b;
+            text-align: center;
+        }
+
+        /* ========= 右侧内容区 ========= */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #ffffff;
+            border-radius: 24px 0 0 24px;
+            margin: 12px 12px 12px 0;
+            overflow: hidden;
+            box-shadow: -2px 0 12px rgba(0,0,0,0.05);
+        }
+
+        .main-header {
+            padding: 20px 28px;
+            border-bottom: 1px solid #eef2ff;
+        }
+
+        .main-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .main-header p {
+            color: #475569;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .doc-frame {
+            flex: 1;
+            width: 100%;
+            border: none;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+    <!-- 左侧多级菜单 -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">Zirui AI</div>
+            <small>让 AI 回归用户手中</small>
+        </div>
+
+        <div class="menu-tree">
+            <!-- ===== 一级：项目总览 ===== -->
+            <div class="menu-category">
+                <div class="category-title" data-cat="overview">
+                    <span>项目总览</span>
+                    <span class="category-toggle">▼</span>
+                </div>
+                <div class="category-items" id="cat-overview">
+                    <div class="menu-item" data-url="https://zirui25.github.io/ai/setup/readme.html">
+                        <span>项目介绍</span>
+                        <span class="menu-badge">v1.0</span>
+                    </div>
+                    <div class="menu-item" data-url="https://zirui25.github.io/ai/setup/architecture.html">
+                        <span>模块化架构</span>
+                    </div>
+                    <div class="menu-item" data-url="https://zirui25.github.io/ai/setup/roadmap.html">
+                        <span>开发路线图</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 一级：核心产品 ===== -->
+            <div class="menu-category">
+                <div class="category-title" data-cat="products">
+                    <span>核心产品</span>
+                    <span class="category-toggle">▼</span>
+                </div>
+                <div class="category-items" id="cat-products">
+                    <div class="menu-item" data-url="https://github.com/zirui25/ZiruiAI">
+                        <span>本地客户端 (run_ai.exe)</span>
+                        <span class="menu-badge">下载</span>
+                    </div>
+                    <div class="menu-item" data-url="https://zirui25.github.io/viewer.html">
+                        <span>文档在线预览器</span>
+                        <span class="menu-badge">批注/高亮</span>
+                    </div>
+                    <div class="menu-item" data-url="https://zirui25.github.io/ai/setup/openapi.html">
+                        <span> Open API 服务</span>
+                        <span class="menu-badge">本地调用</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 一级：模型与生态 ===== -->
+            <div class="menu-category">
+                <div class="category-title" data-cat="models">
+                    <span>模型与生态</span>
+                    <span class="category-toggle">▼</span>
+                </div>
+                <div class="category-items" id="cat-models">
+                    <div class="menu-item" data-url="https://zirui25.github.io/ai/setup/models.html">
+                        <span>支持的模型</span>
+                    </div>
+                    <div class="menu-item" data-url="https://zirui25.github.io/ai/setup/cloud.txt">
+                        <span>模型下载（直链）</span>
+                        <span class="menu-badge">国内镜像</span>
+                    </div>
+                    <div class="menu-item" data-url="https://github.com/zirui25/ai/discussions">
+                        <span>生态论坛 / 技能分享</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 一级：开发与文档 ===== -->
+            <div class="menu-category">
+                <div class="category-title" data-cat="dev">
+                    <span>开发与文档</span>
+                    <span class="category-toggle">▼</span>
+                </div>
+                <div class="category-items" id="cat-dev">
+                    <div class="menu-item" data-url="https://zirui25.github.io/ai/setup/quickstart.html">
+                        <span>快速开始</span>
+                    </div>
+                    <div class="menu-item" data-url="https://zirui25.github.io/ai/setup/api.html">
+                        <span>API 参考</span>
+                    </div>
+                    <div class="menu-item" data-url="https://zirui25.github.io/ysxy.pdf">
+                        <span>隐私协议 / 免责声明</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 一级：支持与社区 ===== -->
+            <div class="menu-category">
+                <div class="category-title" data-cat="support">
+                    <span>支持与社区</span>
+                    <span class="category-toggle">▼</span>
+                </div>
+                <div class="category-items" id="cat-support">
+                    <div class="menu-item" data-url="https://github.com/zirui25/ai/issues">
+                        <span>问题反馈</span>
+                    </div>
+                    <div class="menu-item" data-url="https://zirui25.github.io/ai/setup/faq.html">
+                        <span>常见问题</span>
+                    </div>
+                    <div class="menu-item" data-url="mailto:ruijmsgdcn@outlook.com">
+                        <span>联系开发者</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            让每个人都能享受科技的乐趣——雷军<br>
+            © 2026 Zirui AI 开发者社区（官网zirui25.github.io）
+        </div>
+    </div>
+
+    <!-- 右侧文档区 -->
+    <div class="main">
+        <div class="main-header">
+            <h1 id="pageTitle">Zirui AI · 开发者中心</h1>
+            <p id="pageDesc">本地 · 免费 · 模块化 · 让 AI 成为你的分身</p>
+        </div>
+        <iframe id="docFrame" class="doc-frame" src="https://zirui25.github.io/ai/setup/readme.html" title="文档内容"></iframe>
+    </div>
+</div>
+
+<script>
+    // 多级菜单展开/收起
+    const categories = document.querySelectorAll('.category-title');
+    categories.forEach(cat => {
+        cat.addEventListener('click', () => {
+            const targetId = cat.getAttribute('data-cat');
+            const itemsDiv = document.getElementById(`cat-${targetId}`);
+            if (itemsDiv) {
+                itemsDiv.classList.toggle('open');
+                const toggle = cat.querySelector('.category-toggle');
+                if (toggle) toggle.textContent = itemsDiv.classList.contains('open') ? '▼' : '▶';
+            }
+        });
+    });
+
+    // 默认全部展开
+    document.querySelectorAll('.category-items').forEach(el => el.classList.add('open'));
+
+    // 菜单点击切换 iframe
+    const menuItems = document.querySelectorAll('.menu-item');
+    const frame = document.getElementById('docFrame');
+    const titleEl = document.getElementById('pageTitle');
+    const descEl = document.getElementById('pageDesc');
+
+    const titleMap = {
+        "https://zirui25.github.io/ai/setup/readme.html": "项目介绍",
+        "https://zirui25.github.io/ai/setup/architecture.html": "模块化架构",
+        "https://zirui25.github.io/ai/setup/roadmap.html": "开发路线图",
+        "https://github.com/zirui25/ZiruiAI": "本地客户端 (run_ai.exe)",
+        "https://zirui25.github.io/viewer.html": "文档在线预览器",
+        "https://zirui25.github.io/ai/setup/openapi.html": "Open API 服务",
+        "https://zirui25.github.io/ai/setup/models.html": "支持的模型",
+        "https://zirui25.github.io/ai/setup/cloud.txt": "模型下载直链",
+        "https://github.com/zirui25/ai/discussions": "生态论坛",
+        "https://zirui25.github.io/ai/setup/quickstart.html": "快速开始",
+        "https://zirui25.github.io/ai/setup/api.html": "API 参考",
+        "https://zirui25.github.io/ysxy.pdf": "隐私协议",
+        "https://github.com/zirui25/ai/issues": "问题反馈",
+        "https://zirui25.github.io/ai/setup/faq.html": "常见问题",
+        "mailto:ruijmsgdcn@outlook.com": "联系开发者"
+    };
+
+    const descMap = {
+        "https://zirui25.github.io/ai/setup/readme.html": "项目背景、核心理念、快速开始",
+        "https://zirui25.github.io/ai/setup/architecture.html": "处理器组 / 调度组 / 识别器组 / 执行器组",
+        "https://zirui25.github.io/ai/setup/roadmap.html": "2026 开发计划与里程碑",
+        "https://github.com/zirui25/ZiruiAI": "一键安装 · 模型管理 · 本地推理",
+        "https://zirui25.github.io/viewer.html": "PDF / Word 批注、高亮、手机自适应",
+        "https://zirui25.github.io/ai/setup/openapi.html": "本地 HTTP 服务，供其他程序调用",
+        "https://zirui25.github.io/ai/setup/models.html": "Qwen / DeepSeek 对比与推荐",
+        "https://zirui25.github.io/ai/setup/cloud.txt": "国内镜像直链，支持断点续传",
+        "https://github.com/zirui25/ai/discussions": "分享技能、模型、经验",
+        "https://zirui25.github.io/ai/setup/quickstart.html": "5 分钟上手 Zirui AI",
+        "https://zirui25.github.io/ai/setup/api.html": "HTTP 接口定义与示例",
+        "https://zirui25.github.io/ysxy.pdf": "数据本地化、不上传、可删除",
+        "https://github.com/zirui25/ai/issues": "报告 Bug、提需求",
+        "https://zirui25.github.io/ai/setup/faq.html": "常见问题与解决方案",
+        "mailto:ruijmsgdcn@outlook.com": "直接发送邮件给开发者"
+    };
+
+    function setActiveItem(clicked) {
+        menuItems.forEach(item => item.classList.remove('active'));
+        clicked.classList.add('active');
+        const url = clicked.getAttribute('data-url');
+        if (url) {
+            frame.src = url;
+            titleEl.innerText = titleMap[url] || "Zirui AI · 文档";
+            descEl.innerText = descMap[url] || "本地优先 · 免费开源 · 人人可用";
+        }
+    }
+
+    menuItems.forEach(item => {
+        item.addEventListener('click', () => setActiveItem(item));
+    });
+
+    // 默认激活第一个
+    if (menuItems.length) setActiveItem(menuItems[0]);
+
+    // 处理外部链接（GitHub、邮箱）用新标签页打开
+    frame.addEventListener('load', () => {
+        try {
+            const frameDoc = frame.contentDocument || frame.contentWindow.document;
+            const links = frameDoc.querySelectorAll('a');
+            links.forEach(link => {
+                if (link.href.startsWith('http') && !link.href.includes('zirui25.github.io')) {
+                    link.setAttribute('target', '_blank');
+                }
+            });
+        } catch(e) { /* 跨域忽略 */ }
+    });
+</script>
+</body>
+</html>
